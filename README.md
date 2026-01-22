@@ -2,67 +2,89 @@
 
 ## **Data Loading, Preprocessing, and Feature Selection Workflow**
 
-This project begins by importing essential Python libraries for data manipulation, visualization, and machine learning. The dataset is sourced directly from a public GitHub repository containing medical insurance records, including demographic attributes, lifestyle factors, and corresponding insurance charges.
+This project begins by importing essential Python libraries for data manipulation, visualization, and machine learning. The dataset is sourced directly from a public GitHub repository containing medical insurance records, including demographic attributes, lifestyle factors, and corresponding insurance charges. This project builds a complete end‑to‑end machine learning workflow to predict medical insurance charges using the dataset.
 
-**1. Data Loading and Initial Inspection**
+The focus is on:
+- Clean preprocessing
+- Correct handling of categorical variables
+- Avoiding data leakage
+- Applying multiple feature‑selection techniques
+- Training and comparing several regression models
+- Selecting the best model based on RMSE and R²
 
-The dataset is loaded into a Pandas DataFrame and inspected to understand:
-- Column names and data types
-- Presence of missing values
-- Basic structure and sample records
+**1. Import Required Libraries**
+
+The workflow uses:
+- Pandas, NumPy for data handling
+- Matplotlib, Seaborn for visualization
+- Scikit‑learn for preprocessing, feature selection, and modeling
+- XGBoost for gradient‑boosted regression
+
+**2. Load & Inspect the Dataset**
+
+After loading the dataset:
+- Data types and structure are reviewed
+- Null values are checked
+- First few rows are displayed for initial understanding
   
-The dataset contains no null values, ensuring a clean starting point for preprocessing.
+The dataset is confirmed to be clean and ready for encoding
 
-**2. Encoding Categorical Variables**
 
-Categorical features such as sex, smoker, and region are converted into numerical form using one‑hot encoding. To avoid multicollinearity, the first category of each variable is dropped. After encoding, the dataset expands to include binary indicator columns representing each category.
+**3. Encoding Categorical Variables**
 
-**3. Defining Features and Target Variable**
+Categorical columns (sex, smoker, region) are converted into numerical format using one‑hot encoding with drop_first=True to avoid multicollinearity.
+This results in a fully numerical dataset suitable for machine learning models.
 
-The target variable for prediction is:
-- charges — the medical insurance cost.
+**4. Defining Features and Target Variable**
+
+- Target: charges
+- Features: All remaining columns after encoding serve as input features.
+
+**5. Standardize the Dataset**
   
-All remaining columns serve as input features.
-
-**4. Feature Scaling**
-
-To ensure consistent model performance, all numerical features are standardized using StandardScaler, transforming them to have:
+All features are scaled using StandardScaler to ensure:
 - Mean = 0
 - Standard deviation = 1
   
-This step is crucial for models sensitive to feature magnitude, such as Lasso, Ridge, and gradient‑based algorithms.
+This step is essential for regularized models and gradient‑based algorithms.
 
-**5. Train–Test Split (Before Feature Selection)**
+**6. Train–Test Split (Before Feature Selection)**
 
-To prevent data leakage, the dataset is split into training and testing sets before performing any feature selection. This ensures that feature selection is based solely on training data and does not inadvertently use information from the test set.
+To prevent data leakage, the dataset is split into:
+- 80% training data
+- 20% testing data
+  
+Feature selection is performed only on the training set.
 
-**6. Feature Selection Using Three Methods**
+**7. Feature Selection Methods**
 
-Three complementary techniques are applied to identify the most influential predictors of insurance cost:
-Lasso Regression (L1 Regularization)
-- Performs aggressive coefficient shrinkage
-- Selects only features with non‑zero coefficients
-Ridge Regression (L2 Regularization)
-- Penalizes large coefficients
-- Ranks features by importance
+Three different techniques are applied to identify the most important predictors:
+1. Lasso Regression (L1 Regularization)
+- Selects features with non‑zero coefficients
+  
+2. Ridge Regression (L2 Regularization)
+- Ranks features by coefficient magnitude
 - Top 8 features are selected
-Random Forest Regressor
-- Captures non‑linear relationships
-- Ranks features using impurity‑based importance
+  
+3. Random Forest Regressor
+- Uses impurity‑based feature importance
 - Top 8 features are selected
-A union of all selected features from the three methods forms the final feature set used for modeling.
+  
+The union of all selected features forms the final feature set.
 
-**7. Preparing Final Training and Testing Data**
+**8. Prepare Final Train/Test Data**
 
-The training and testing datasets are subset to include only the selected features. This reduces dimensionality and improves model interpretability while retaining predictive power.
+Training and testing datasets are subset to include only the selected features.
+This reduces dimensionality and improves interpretability.
 
-**8. Baseline Model (All Features)**
+**9. Baseline Model (All Features)**
 
-A baseline Linear Regression model is trained using all scaled features. Its performance (RMSE, MAE, R²) serves as a benchmark to compare against models trained on selected features.
+A baseline Linear Regression model is trained using all scaled features.
+Its performance metrics (RMSE, MAE, R²) serve as a benchmark for comparison.
 
-**9. Regression Models Trained on Selected Features**
+**10. Regression Models Using Selected Features**
 
-Multiple regression models are trained and evaluated using only the selected features:
+The following models are trained and evaluated:
 - Linear Regression
 - Decision Tree Regressor
 - Random Forest Regressor
@@ -70,24 +92,25 @@ Multiple regression models are trained and evaluated using only the selected fea
 - XGBoost Regressor
   
 Each model is evaluated using:
-- Root Mean Squared Error (RMSE)
-- Mean Absolute Error (MAE)
+- RMSE
+- MAE
 - R² Score
 
-**10. Performance Comparison and Visualization**
+**11. Performance Comparison**
 
-Model performance is summarized in a comparison table and visualized using horizontal bar charts for:
-- RMSE (lower is better)
-- R² Score (higher is better)
-- MAE (optional but included for completeness)
-These visualizations highlight how each model performs relative to the baseline and to one another.
-
-**11. Final Model Selection**
-
-Based on evaluation metrics:
-- XGBoost achieves the lowest RMSE
-- XGBoost achieves the highest R² Score
+Performance is summarized in a results table and visualized using:
+- RMSE bar chart
+- R² bar chart
+- MAE bar chart
   
-**Final Decision**
+These visualizations clearly show how each model performs relative to the baseline.
+
+**12. Final Model Selection**
+
+Based on the evaluation:
+- XGBoost achieved the lowest RMSE
+- XGBoost achieved the highest R² Score
+  
+**Final Decision:**
 
 XGBoost is selected as the best-performing model for predicting medical insurance costs.
